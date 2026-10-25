@@ -6,19 +6,18 @@
   <title>Схема участка — оцифровка</title>
   <style>
     :root {
-      --bg: #f7f4ef;
-      --ink: #1c1a16;
-      --muted: #5c574e;
+      --bg: #f3efe7;
+      --ink: #1a1814;
+      --muted: #5a554c;
       --line: #2a261f;
-      --paper: #fffdf8;
-      --house: #d4a574;
-      --sport: #6b9ac4;
-      --sport2: #7eb8a8;
-      --garden: #8fbc8f;
-      --rest: #c47a6a;
-      --infra: #b8a990;
-      --path: #c4b89a;
-      --accent: #2f5d50;
+      --paper: #fffcf6;
+      --house: #c9a06a;
+      --sport: #6a98c0;
+      --sport2: #6fafa0;
+      --garden: #7eae7e;
+      --rest: #c07a6c;
+      --path: #b5a57e;
+      --accent: #2c5548;
     }
     * { box-sizing: border-box; }
     body {
@@ -26,102 +25,83 @@
       font-family: "Segoe UI", "PT Sans", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(ellipse at 20% 0%, #e8efe6 0%, transparent 45%),
-        radial-gradient(ellipse at 90% 20%, #efe6d8 0%, transparent 40%),
+        radial-gradient(ellipse at 10% 0%, #e4ebe3 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 30%, #ebe3d6 0%, transparent 45%),
         var(--bg);
       line-height: 1.45;
     }
-    header {
-      padding: 1.5rem 1.25rem 0.5rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+    header { padding: 1.4rem 1.2rem 0.4rem; max-width: 1180px; margin: 0 auto; }
     h1 {
-      font-family: "Georgia", "Times New Roman", serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-weight: 600;
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      margin: 0 0 0.4rem;
+      font-size: clamp(1.5rem, 2.8vw, 2rem);
+      margin: 0 0 0.35rem;
       color: var(--accent);
-      letter-spacing: -0.02em;
     }
-    .lead { color: var(--muted); max-width: 52rem; margin: 0; }
+    .lead { color: var(--muted); max-width: 56rem; margin: 0; font-size: 0.95rem; }
     .layout {
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 1.25rem;
-      max-width: 1100px;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 1.1rem;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 1rem 1.25rem 2.5rem;
+      padding: 0.9rem 1.2rem 2rem;
     }
-    @media (max-width: 860px) {
-      .layout { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
     .panel {
       background: var(--paper);
-      border: 1px solid color-mix(in srgb, var(--line) 18%, transparent);
-      border-radius: 2px;
-      padding: 1rem;
+      border: 1px solid color-mix(in srgb, var(--line) 16%, transparent);
+      padding: 0.9rem;
     }
     .panel h2 {
       font-family: Georgia, serif;
-      font-size: 1.05rem;
-      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      margin: 0 0 0.65rem;
       color: var(--accent);
     }
     .plan-wrap {
       overflow: auto;
-      background: #f0ebe3;
-      border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
+      background: #e7efe4;
+      border: 1px solid color-mix(in srgb, var(--line) 14%, transparent);
     }
-    svg { display: block; width: 100%; height: auto; min-width: 320px; }
-    .zone { cursor: pointer; transition: opacity 0.15s; }
-    .zone:hover, .zone.active { filter: brightness(0.95) saturate(1.15); outline: none; }
-    .zone.active { stroke-width: 2.2; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
+    svg { display: block; width: 100%; height: auto; min-width: 480px; }
+    .zone { cursor: pointer; }
+    .zone:hover { filter: brightness(0.97) saturate(1.12); }
+    .zone.active { outline: none; filter: brightness(0.94) saturate(1.2); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
     th, td {
       text-align: left;
-      padding: 0.45rem 0.35rem;
+      padding: 0.4rem 0.3rem;
       border-bottom: 1px solid color-mix(in srgb, var(--line) 12%, transparent);
       vertical-align: top;
     }
-    th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    tr.hl td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 0.75rem;
-      margin: 0.75rem 0 0;
-      font-size: 0.85rem;
+    th {
       color: var(--muted);
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    tr.hl td { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 0.35rem 0.7rem;
+      margin: 0.7rem 0 0; font-size: 0.82rem; color: var(--muted);
     }
     .swatch {
-      display: inline-block;
-      width: 0.75rem;
-      height: 0.75rem;
-      margin-right: 0.3rem;
-      vertical-align: -0.05rem;
-      border: 1px solid color-mix(in srgb, var(--line) 25%, transparent);
+      display: inline-block; width: 0.7rem; height: 0.7rem;
+      margin-right: 0.28rem; vertical-align: -0.05rem;
+      border: 1px solid color-mix(in srgb, var(--line) 22%, transparent);
     }
     .detail {
-      min-height: 3.2rem;
-      margin-top: 0.75rem;
-      padding: 0.65rem 0.75rem;
+      min-height: 2.8rem; margin-top: 0.7rem; padding: 0.55rem 0.7rem;
       background: color-mix(in srgb, var(--accent) 6%, transparent);
-      border-left: 3px solid var(--accent);
-      font-size: 0.92rem;
+      border-left: 3px solid var(--accent); font-size: 0.9rem;
     }
     .detail strong { color: var(--accent); }
-    .note { font-size: 0.82rem; color: var(--muted); margin-top: 0.75rem; }
+    .note { font-size: 0.8rem; color: var(--muted); margin-top: 0.65rem; }
     footer {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.25rem 2rem;
-      font-size: 0.82rem;
-      color: var(--muted);
+      max-width: 1180px; margin: 0 auto; padding: 0 1.2rem 1.8rem;
+      font-size: 0.8rem; color: var(--muted);
     }
   </style>
 </head>
@@ -129,9 +109,8 @@
   <header>
     <h1>Схема участка — оцифровка</h1>
     <p class="lead">
-      Все элементы с рукописного эскиза перенесены на план и подписаны.
-      Размеры — по подписям на чертеже; габарит участка (~25×42&nbsp;м) оценён по пропорциям.
-      Нажмите зону на плане, чтобы выделить её в списке.
+      План приведён к ориентации эскиза: спортплощадки слева, дом справа, въезд снизу у дома.
+      Размеры построек — по подписям. Дорожки, деревья и ориентация прямоугольников сверены с чертежом.
     </p>
   </header>
 
@@ -139,189 +118,250 @@
     <section class="panel">
       <h2>План</h2>
       <div class="plan-wrap">
-        <svg viewBox="-2 -2 29 46" xmlns="http://www.w3.org/2000/svg" aria-label="План участка">
+        <!--
+          Coordinate system: metres, origin top-left of plot.
+          Plot ≈ 44 × 28 m (from proportions of sketch; labeled sizes are exact).
+          Orientation matches the photo of the sketch (not rotated).
+        -->
+        <svg viewBox="-2.5 -2 49 33" xmlns="http://www.w3.org/2000/svg" aria-label="План участка">
           <defs>
-            <pattern id="grass" width="1.2" height="1.2" patternUnits="userSpaceOnUse">
-              <path d="M0.6 1.1 L0.6 0.2 M0.3 1 L0.5 0.4 M0.9 1 L0.7 0.35" stroke="#6a9a6a" stroke-width="0.08" fill="none" opacity="0.35"/>
+            <pattern id="hedge" width="2.2" height="2.2" patternUnits="userSpaceOnUse">
+              <circle cx="1.1" cy="1.1" r="1.05" fill="#6f9a6f" stroke="#2a261f" stroke-width="0.06"/>
             </pattern>
           </defs>
 
-          <!-- boundary -->
-          <rect x="0" y="0" width="25" height="42" fill="#e8f0e4" stroke="#2a261f" stroke-width="0.15"/>
+          <!-- plot boundary -->
+          <rect x="0" y="0" width="44" height="28" fill="#e4f0df" stroke="#2a261f" stroke-width="0.14"/>
 
-          <!-- perimeter trees top -->
+          <!-- LEFT trees: continuous scalloped hedge -->
           <g class="zone" data-id="perimeter" data-name="Деревья / кустарник" data-size="" data-cat="Сад">
-            <circle cx="1.2" cy="1.1" r="0.85" fill="#7da87d"/><circle cx="3.2" cy="1.1" r="0.85" fill="#6f9c6f"/>
-            <circle cx="5.2" cy="1.1" r="0.85" fill="#7da87d"/><circle cx="7.2" cy="1.1" r="0.85" fill="#6f9c6f"/>
-            <circle cx="9.2" cy="1.1" r="0.85" fill="#7da87d"/><circle cx="11.2" cy="1.1" r="0.85" fill="#6f9c6f"/>
-            <circle cx="13.2" cy="1.1" r="0.85" fill="#7da87d"/><circle cx="15.2" cy="1.1" r="0.85" fill="#6f9c6f"/>
-            <circle cx="17.2" cy="1.1" r="0.85" fill="#7da87d"/><circle cx="19.2" cy="1.1" r="0.85" fill="#6f9c6f"/>
-            <circle cx="21.2" cy="1.1" r="0.85" fill="#7da87d"/><circle cx="23.2" cy="1.1" r="0.85" fill="#6f9c6f"/>
-            <circle cx="23.8" cy="4" r="0.8" fill="#7da87d"/><circle cx="23.8" cy="7" r="0.8" fill="#6f9c6f"/>
-            <circle cx="23.8" cy="10" r="0.8" fill="#7da87d"/><circle cx="23.8" cy="13" r="0.8" fill="#6f9c6f"/>
-            <circle cx="23.8" cy="16" r="0.8" fill="#7da87d"/><circle cx="23.8" cy="19" r="0.8" fill="#6f9c6f"/>
-            <circle cx="23.8" cy="22" r="0.8" fill="#7da87d"/><circle cx="23.8" cy="25" r="0.8" fill="#6f9c6f"/>
-            <circle cx="23.8" cy="28" r="0.8" fill="#7da87d"/>
-            <text x="12.5" y="0.35" text-anchor="middle" font-size="0.45" fill="#2a261f">деревья / кустарник</text>
+            <path d="M -0.2,1.5
+                     C 0.6,1.0 1.4,1.2 1.6,2.2
+                     C 2.0,1.4 2.8,1.5 2.9,2.5
+                     C 3.3,1.7 4.0,1.8 4.0,2.8
+                     L 1.8,26.5
+                     C 1.2,26.8 0.4,26.2 -0.2,26.0
+                     Z"
+                  fill="#7eae7e" opacity="0.85" stroke="#2a261f" stroke-width="0.08"/>
+            <!-- scallops drawn as overlapping circles for hedge look -->
+            <circle cx="1.3" cy="2.5" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.4" cy="4.6" r="1.2" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.3" cy="6.8" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.5" cy="9.0" r="1.25" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.3" cy="11.3" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.4" cy="13.5" r="1.2" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.3" cy="15.7" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.5" cy="17.9" r="1.2" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.4" cy="20.2" r="1.2" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.5" cy="22.5" r="1.15" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="1.6" cy="24.7" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <!-- bottom hedge -->
+            <circle cx="4.0" cy="26.8" r="1.1" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="6.2" cy="27.0" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="8.5" cy="26.9" r="1.1" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="10.8" cy="27.1" r="1.15" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="13.0" cy="26.8" r="1.05" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="15.2" cy="27.0" r="1.1" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="17.4" cy="26.9" r="1.05" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
           </g>
 
-          <!-- lawn -->
-          <g class="zone" data-id="lawn" data-name="Газон" data-size="" data-cat="Сад">
-            <rect x="22.2" y="2.2" width="1.4" height="13.5" rx="0.2" fill="url(#grass)" stroke="#2a261f" stroke-width="0.05"/>
-            <rect x="22.2" y="2.2" width="1.4" height="13.5" rx="0.2" fill="#8fbc8f" opacity="0.45"/>
-            <text x="22.9" y="9" font-size="0.45" text-anchor="middle" transform="rotate(90 22.9 9)" fill="#1c1a16">Газон</text>
-          </g>
-
-          <!-- football -->
+          <!-- Football 9×14, vertical -->
           <g class="zone" data-id="football" data-name="Футбольное поле" data-size="9×14 м" data-cat="Спорт">
-            <rect x="13.2" y="2.2" width="9" height="14" fill="#6b9ac4" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
-            <line x1="13.2" y1="9.2" x2="22.2" y2="9.2" stroke="#2a261f" stroke-width="0.05" stroke-dasharray="0.3 0.2"/>
-            <circle cx="17.7" cy="9.2" r="1.4" fill="none" stroke="#2a261f" stroke-width="0.05"/>
-            <text x="17.7" y="8.0" text-anchor="middle" font-size="0.65" font-weight="600" fill="#1c1a16">Футбол</text>
-            <text x="17.7" y="8.85" text-anchor="middle" font-size="0.55" fill="#1c1a16">9×14</text>
+            <rect x="3.2" y="2.2" width="9" height="14" fill="#6a98c0" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
+            <line x1="3.2" y1="9.2" x2="12.2" y2="9.2" stroke="#2a261f" stroke-width="0.05" stroke-dasharray="0.35 0.2"/>
+            <circle cx="7.7" cy="9.2" r="1.5" fill="none" stroke="#2a261f" stroke-width="0.05"/>
+            <text x="7.7" y="8.5" text-anchor="middle" font-size="0.7" font-weight="700" fill="#1a1814">Футбол</text>
+            <text x="7.7" y="9.4" text-anchor="middle" font-size="0.55" fill="#1a1814">9×14</text>
           </g>
 
-          <!-- tennis -->
-          <g class="zone" data-id="tennis" data-name="Теннис + воркаут + баскетбол" data-size="9×8 м" data-cat="Спорт">
-            <rect x="13.2" y="16.8" width="9" height="8" fill="#7eb8a8" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
-            <line x1="17.7" y1="16.8" x2="17.7" y2="24.8" stroke="#2a261f" stroke-width="0.05" stroke-dasharray="0.25 0.2"/>
-            <text x="17.7" y="19.6" text-anchor="middle" font-size="0.48" font-weight="600" fill="#1c1a16">Теннис + воркаут</text>
-            <text x="17.7" y="20.3" text-anchor="middle" font-size="0.48" fill="#1c1a16">+ баскетбол</text>
-            <text x="17.7" y="21.05" text-anchor="middle" font-size="0.5" fill="#1c1a16">9×8</text>
-          </g>
-
-          <!-- greenhouse -->
-          <g class="zone" data-id="greenhouse" data-name="Теплица" data-size="" data-cat="Сад">
-            <rect x="1.2" y="2.4" width="5.2" height="4.2" fill="#8fbc8f" opacity="0.65" stroke="#2a261f" stroke-width="0.1"/>
-            <line x1="2.2" y1="2.55" x2="2.2" y2="6.4" stroke="#2a261f" stroke-width="0.04" opacity="0.45"/>
-            <line x1="3.2" y1="2.55" x2="3.2" y2="6.4" stroke="#2a261f" stroke-width="0.04" opacity="0.45"/>
-            <line x1="4.2" y1="2.55" x2="4.2" y2="6.4" stroke="#2a261f" stroke-width="0.04" opacity="0.45"/>
-            <line x1="5.2" y1="2.55" x2="5.2" y2="6.4" stroke="#2a261f" stroke-width="0.04" opacity="0.45"/>
-            <text x="3.8" y="4.5" text-anchor="middle" font-size="0.55" font-weight="600" fill="#1c1a16">Теплица</text>
-          </g>
-
-          <!-- bath -->
-          <g class="zone" data-id="bath" data-name="Баня" data-size="3×4 м" data-cat="Постройки">
-            <rect x="7" y="2.6" width="4" height="3" fill="#d4a574" opacity="0.75" stroke="#2a261f" stroke-width="0.1"/>
-            <text x="9" y="3.9" text-anchor="middle" font-size="0.5" font-weight="600" fill="#1c1a16">Баня</text>
-            <text x="9" y="4.55" text-anchor="middle" font-size="0.45" fill="#1c1a16">3×4</text>
-          </g>
-
-          <!-- campfire -->
-          <g class="zone" data-id="campfire" data-name="Костёр" data-size="5×5 м" data-cat="Отдых">
-            <rect x="1.5" y="11.5" width="5" height="5" fill="#c47a6a" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
-            <circle cx="4" cy="14" r="0.7" fill="#e08a3c" stroke="#2a261f" stroke-width="0.06"/>
-            <text x="4" y="12.7" text-anchor="middle" font-size="0.5" font-weight="600" fill="#1c1a16">Костёр</text>
-            <text x="4" y="13.35" text-anchor="middle" font-size="0.45" fill="#1c1a16">5×5</text>
-          </g>
-
-          <!-- swings -->
-          <g class="zone" data-id="swings" data-name="Качели" data-size="" data-cat="Отдых">
-            <rect x="7" y="13.2" width="2.4" height="1.6" rx="0.2" fill="#c47a6a" opacity="0.45" stroke="#2a261f" stroke-width="0.06"/>
-            <text x="8.2" y="14.2" text-anchor="middle" font-size="0.4" fill="#1c1a16">качели</text>
-          </g>
-
-          <!-- winter slide -->
-          <g class="zone" data-id="slide" data-name="Горка зимняя" data-size="" data-cat="Отдых">
-            <ellipse cx="10.2" cy="19.5" rx="3.2" ry="2.4" fill="#9b8ec4" opacity="0.5" stroke="#2a261f" stroke-width="0.1"/>
-            <text x="10.2" y="19.15" text-anchor="middle" font-size="0.5" font-weight="600" fill="#1c1a16">Горка</text>
-            <text x="10.2" y="19.85" text-anchor="middle" font-size="0.45" fill="#1c1a16">зимняя</text>
-          </g>
-
-          <!-- new year spruce -->
-          <g class="zone" data-id="tree" data-name="Ель новогодняя" data-size="" data-cat="Сад">
-            <polygon points="14.5,20.2 16.0,23.0 13.0,23.0" fill="#4f8a4f" stroke="#2a261f" stroke-width="0.06"/>
-            <polygon points="14.5,21.4 15.5,24.0 13.5,24.0" fill="#5f9a5f" stroke="#2a261f" stroke-width="0.05"/>
-            <rect x="14.3" y="24.0" width="0.4" height="0.5" fill="#5a4030"/>
-            <text x="14.5" y="25.15" text-anchor="middle" font-size="0.38" fill="#1c1a16">ель</text>
-            <text x="14.5" y="25.6" text-anchor="middle" font-size="0.38" fill="#1c1a16">новогодняя</text>
-          </g>
-
-          <!-- trees near house -->
-          <g class="zone" data-id="perimeter" data-name="Деревья / кустарник" data-size="" data-cat="Сад">
-            <circle cx="4.2" cy="26.5" r="0.7" fill="#7da87d"/><circle cx="5.5" cy="26.2" r="0.75" fill="#6f9c6f"/>
-            <circle cx="4.8" cy="27.5" r="0.65" fill="#7da87d"/>
-          </g>
-
-          <!-- BBQ -->
-          <g class="zone" data-id="bbq" data-name="Мангал" data-size="3×4 м" data-cat="Отдых">
-            <rect x="16.5" y="27.5" width="4" height="3" fill="#c47a6a" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
-            <text x="18.5" y="28.7" text-anchor="middle" font-size="0.5" font-weight="600" fill="#1c1a16">Мангал</text>
-            <text x="18.5" y="29.4" text-anchor="middle" font-size="0.45" fill="#1c1a16">3×4</text>
-          </g>
-
-          <g class="zone" data-id="perimeter" data-name="Деревья / кустарник" data-size="" data-cat="Сад">
-            <circle cx="21.5" cy="28.2" r="0.7" fill="#7da87d"/><circle cx="22.5" cy="29.2" r="0.65" fill="#6f9c6f"/>
-          </g>
-
-          <!-- shed -->
-          <g class="zone" data-id="shed" data-name="Бытовка" data-size="2,5×6 м" data-cat="Постройки">
-            <rect x="16" y="32.5" width="6" height="2.5" fill="#c9b27a" opacity="0.75" stroke="#2a261f" stroke-width="0.1"/>
-            <text x="19" y="33.5" text-anchor="middle" font-size="0.5" font-weight="600" fill="#1c1a16">Бытовка</text>
-            <text x="19" y="34.15" text-anchor="middle" font-size="0.45" fill="#1c1a16">2,5×6</text>
-          </g>
-
-          <!-- house -->
-          <g class="zone" data-id="house" data-name="Дом" data-size="" data-cat="Постройки">
-            <rect x="2.2" y="29.5" width="10.5" height="9" fill="#d4a574" opacity="0.8" stroke="#2a261f" stroke-width="0.12"/>
-            <rect x="0.8" y="32.5" width="1.4" height="2.8" fill="#c99660" stroke="#2a261f" stroke-width="0.08"/>
-            <line x1="7.45" y1="29.5" x2="7.45" y2="38.5" stroke="#2a261f" stroke-width="0.04" opacity="0.35"/>
-            <line x1="2.2" y1="34" x2="12.7" y2="34" stroke="#2a261f" stroke-width="0.04" opacity="0.35"/>
-            <text x="7.45" y="34.0" text-anchor="middle" font-size="0.75" font-weight="700" fill="#1c1a16">Дом</text>
-          </g>
-
-          <!-- parking -->
-          <g class="zone" data-id="parking" data-name="Парковка / клумбы" data-size="" data-cat="Инфраструктура">
-            <ellipse cx="14.2" cy="35.5" rx="1.3" ry="0.85" fill="#c9b27a" opacity="0.7" stroke="#2a261f" stroke-width="0.06"/>
-            <ellipse cx="14.2" cy="37.6" rx="1.3" ry="0.85" fill="#c9b27a" opacity="0.7" stroke="#2a261f" stroke-width="0.06"/>
-            <text x="14.2" y="39.05" text-anchor="middle" font-size="0.4" fill="#1c1a16">парковка</text>
-          </g>
-
-          <!-- paths -->
-          <g class="zone" data-id="paths" data-name="Дорожки" data-size="" data-cat="Инфраструктура" opacity="0.9">
-            <path d="M 7.5 40.5 L 7.5 38.5" fill="none" stroke="#a89870" stroke-width="1.2" stroke-linecap="round"/>
-            <path d="M 7.5 38.5 C 8 37, 10 36.5, 11.5 35.5 C 13 34, 12.5 31, 11.5 28.5 C 10.5 26, 9.5 23.5, 10.2 21.5 C 10.8 19.5, 12 18, 13.2 17.5"
-                  fill="none" stroke="#a89870" stroke-width="0.55" stroke-linecap="round"/>
-            <path d="M 10.5 28 C 8 26, 6 22, 4.5 18 C 3.5 15.5, 3.5 12, 4 10"
-                  fill="none" stroke="#a89870" stroke-width="0.45" stroke-linecap="round"/>
-            <path d="M 12 30 C 14 29.5, 16 29, 18 28.5"
-                  fill="none" stroke="#a89870" stroke-width="0.4" stroke-linecap="round"/>
-          </g>
-
-          <!-- ditch -->
-          <g class="zone" data-id="ditch" data-name="Канава" data-size="" data-cat="Инфраструктура">
-            <line x1="-0.35" y1="20" x2="-0.35" y2="28" stroke="#5a9aaa" stroke-width="0.28"/>
-            <polygon points="-1.0,24 -0.35,23.35 -0.35,24.65" fill="#5a9aaa"/>
-            <text x="-1.25" y="26" font-size="0.45" fill="#5c574e" transform="rotate(-90 -1.25 26)">Канава</text>
-          </g>
-
-          <!-- gabion -->
+          <!-- Gabion BETWEEN football and tennis -->
           <g class="zone" data-id="gabion" data-name="Габион" data-size="" data-cat="Инфраструктура">
-            <text x="25.55" y="18" font-size="0.5" fill="#5c574e">Габион</text>
-            <path d="M 25.3 18.4 L 25.85 19 L 25.3 19.6 L 25.85 20.2 L 25.3 20.8" fill="none" stroke="#2a261f" stroke-width="0.1"/>
+            <rect x="12.35" y="2.4" width="0.9" height="13.6" fill="#9a9588" stroke="#2a261f" stroke-width="0.06"/>
+            <line x1="12.5" y1="3" x2="13.05" y2="3.6" stroke="#2a261f" stroke-width="0.05"/>
+            <line x1="12.5" y1="4.2" x2="13.05" y2="4.8" stroke="#2a261f" stroke-width="0.05"/>
+            <line x1="12.5" y1="5.4" x2="13.05" y2="6.0" stroke="#2a261f" stroke-width="0.05"/>
+            <line x1="12.5" y1="6.6" x2="13.05" y2="7.2" stroke="#2a261f" stroke-width="0.05"/>
+            <line x1="12.5" y1="7.8" x2="13.05" y2="8.4" stroke="#2a261f" stroke-width="0.05"/>
+            <text x="12.8" y="1.9" text-anchor="middle" font-size="0.45" fill="#5a554c">габион</text>
           </g>
 
-          <!-- utility markers -->
-          <g>
-            <circle cx="3.2" cy="40.5" r="0.45" fill="#fffdf8" stroke="#2a261f" stroke-width="0.08"/>
-            <text x="3.2" y="40.68" text-anchor="middle" font-size="0.45" font-weight="700">К</text>
-            <circle cx="4.5" cy="40.5" r="0.45" fill="#fffdf8" stroke="#2a261f" stroke-width="0.08"/>
-            <text x="4.5" y="40.68" text-anchor="middle" font-size="0.45" font-weight="700">С</text>
-            <circle cx="22.5" cy="40.5" r="0.45" fill="#fffdf8" stroke="#2a261f" stroke-width="0.08"/>
-            <text x="22.5" y="40.68" text-anchor="middle" font-size="0.45" font-weight="700">К</text>
+          <!-- Tennis 8×9 (label 9×8): shorter than football, to its right -->
+          <g class="zone" data-id="tennis" data-name="Теннис + воркаут + баскетбол" data-size="9×8 м" data-cat="Спорт">
+            <rect x="13.5" y="2.5" width="8" height="9" fill="#6fafa0" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
+            <line x1="17.5" y1="2.5" x2="17.5" y2="11.5" stroke="#2a261f" stroke-width="0.05" stroke-dasharray="0.25 0.2"/>
+            <text x="17.5" y="6.2" text-anchor="middle" font-size="0.48" font-weight="700" fill="#1a1814">Теннис + воркаут</text>
+            <text x="17.5" y="6.9" text-anchor="middle" font-size="0.48" fill="#1a1814">+ баскетбол</text>
+            <text x="17.5" y="7.6" text-anchor="middle" font-size="0.5" fill="#1a1814">9×8</text>
           </g>
 
-          <text x="12.5" y="41.7" text-anchor="middle" font-size="0.5" fill="#5c574e">вход / въезд</text>
-          <text x="12.5" y="-0.55" text-anchor="middle" font-size="0.42" fill="#5c574e">дальняя сторона участка</text>
+          <!-- Lawn note near top of sports -->
+          <g class="zone" data-id="lawn" data-name="Газон" data-size="" data-cat="Сад">
+            <text x="18" y="1.6" font-size="0.45" fill="#5a554c">газон</text>
+          </g>
+
+          <!-- Bath 3×4 under football (4 horizontal, 3 vertical) -->
+          <g class="zone" data-id="bath" data-name="Баня" data-size="3×4 м" data-cat="Постройки">
+            <rect x="3.5" y="16.6" width="4" height="3" fill="#c9a06a" opacity="0.8" stroke="#2a261f" stroke-width="0.1"/>
+            <text x="5.5" y="18.0" text-anchor="middle" font-size="0.5" font-weight="700" fill="#1a1814">Баня</text>
+            <text x="5.5" y="18.7" text-anchor="middle" font-size="0.42" fill="#1a1814">3×4</text>
+          </g>
+
+          <!-- Greenhouse under bath -->
+          <g class="zone" data-id="greenhouse" data-name="Теплица" data-size="" data-cat="Сад">
+            <rect x="3.3" y="20.2" width="6.5" height="4.5" fill="#7eae7e" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
+            <rect x="3.7" y="22.6" width="5.7" height="1.7" fill="none" stroke="#2a261f" stroke-width="0.06"/>
+            <line x1="4.8" y1="20.4" x2="4.8" y2="22.4" stroke="#2a261f" stroke-width="0.05" opacity="0.5"/>
+            <line x1="5.9" y1="20.4" x2="5.9" y2="22.4" stroke="#2a261f" stroke-width="0.05" opacity="0.5"/>
+            <line x1="7.0" y1="20.4" x2="7.0" y2="22.4" stroke="#2a261f" stroke-width="0.05" opacity="0.5"/>
+            <line x1="8.1" y1="20.4" x2="8.1" y2="22.4" stroke="#2a261f" stroke-width="0.05" opacity="0.5"/>
+            <text x="6.55" y="23.6" text-anchor="middle" font-size="0.5" font-weight="700" fill="#1a1814">Теплица</text>
+          </g>
+
+          <!-- Fire pit 5×5 -->
+          <g class="zone" data-id="campfire" data-name="Костёр" data-size="5×5 м" data-cat="Отдых">
+            <rect x="11.5" y="20.0" width="5" height="5" fill="#c07a6c" opacity="0.5" stroke="#2a261f" stroke-width="0.1"/>
+            <circle cx="14" cy="22.5" r="0.75" fill="#e08a3c" stroke="#2a261f" stroke-width="0.07"/>
+            <!-- stones around -->
+            <ellipse cx="12.3" cy="20.6" rx="0.35" ry="0.25" fill="#9a9588"/>
+            <ellipse cx="15.6" cy="20.7" rx="0.35" ry="0.25" fill="#9a9588"/>
+            <ellipse cx="12.2" cy="24.3" rx="0.35" ry="0.25" fill="#9a9588"/>
+            <ellipse cx="15.7" cy="24.2" rx="0.35" ry="0.25" fill="#9a9588"/>
+            <text x="14" y="21.3" text-anchor="middle" font-size="0.48" font-weight="700" fill="#1a1814">Костёр</text>
+            <text x="14" y="23.7" text-anchor="middle" font-size="0.42" fill="#1a1814">5×5</text>
+          </g>
+
+          <!-- Swings near fire pit -->
+          <g class="zone" data-id="swings" data-name="Качели" data-size="" data-cat="Отдых">
+            <line x1="17.2" y1="23.2" x2="19.6" y2="23.2" stroke="#2a261f" stroke-width="0.1"/>
+            <line x1="17.2" y1="22.9" x2="17.2" y2="23.5" stroke="#2a261f" stroke-width="0.1"/>
+            <line x1="19.6" y1="22.9" x2="19.6" y2="23.5" stroke="#2a261f" stroke-width="0.1"/>
+            <text x="18.4" y="24.1" text-anchor="middle" font-size="0.4" fill="#1a1814">качели</text>
+          </g>
+
+          <!-- Winter slide -->
+          <g class="zone" data-id="slide" data-name="Горка зимняя" data-size="" data-cat="Отдых">
+            <ellipse cx="15.2" cy="14.5" rx="3.4" ry="2.1" fill="#9b8ec4" opacity="0.5" stroke="#2a261f" stroke-width="0.1"/>
+            <text x="15.2" y="14.2" text-anchor="middle" font-size="0.48" font-weight="700" fill="#1a1814">Горка</text>
+            <text x="15.2" y="14.9" text-anchor="middle" font-size="0.42" fill="#1a1814">зимняя</text>
+          </g>
+
+          <!-- New Year spruce -->
+          <g class="zone" data-id="tree" data-name="Ель новогодняя" data-size="" data-cat="Сад">
+            <polygon points="23.2,10.0 24.5,12.6 21.9,12.6" fill="#4f8a4f" stroke="#2a261f" stroke-width="0.06"/>
+            <polygon points="23.2,10.8 24.2,13.2 22.2,13.2" fill="#5f9a5f" stroke="#2a261f" stroke-width="0.05"/>
+            <rect x="23.0" y="13.2" width="0.4" height="0.45" fill="#5a4030"/>
+            <text x="23.2" y="14.3" text-anchor="middle" font-size="0.36" fill="#1a1814">ель</text>
+            <text x="23.2" y="14.75" text-anchor="middle" font-size="0.36" fill="#1a1814">новогодняя</text>
+          </g>
+
+          <!-- BBQ 3×4 near top, between tennis and shed -->
+          <g class="zone" data-id="bbq" data-name="Мангал" data-size="3×4 м" data-cat="Отдых">
+            <rect x="24.5" y="1.5" width="4" height="3" fill="#c07a6c" opacity="0.55" stroke="#2a261f" stroke-width="0.1"/>
+            <text x="26.5" y="2.8" text-anchor="middle" font-size="0.48" font-weight="700" fill="#1a1814">Мангал</text>
+            <text x="26.5" y="3.5" text-anchor="middle" font-size="0.42" fill="#1a1814">3×4</text>
+          </g>
+
+          <!-- Trees near shed / top right -->
+          <g class="zone" data-id="perimeter" data-name="Деревья / кустарник" data-size="" data-cat="Сад">
+            <circle cx="30.2" cy="2.2" r="1.1" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="31.6" cy="3.4" r="1.0" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="29.8" cy="3.8" r="0.95" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+          </g>
+
+          <!-- Shed 2.5×6 horizontal -->
+          <g class="zone" data-id="shed" data-name="Бытовка" data-size="2,5×6 м" data-cat="Постройки">
+            <rect x="33.0" y="1.6" width="6" height="2.5" fill="#c9b27a" opacity="0.8" stroke="#2a261f" stroke-width="0.1"/>
+            <text x="36" y="2.7" text-anchor="middle" font-size="0.48" font-weight="700" fill="#1a1814">Бытовка</text>
+            <text x="36" y="3.4" text-anchor="middle" font-size="0.4" fill="#1a1814">2,5×6</text>
+          </g>
+
+          <!-- Utility K near shed -->
+          <circle cx="40.2" cy="2.8" r="0.55" fill="#fffcf6" stroke="#2a261f" stroke-width="0.08"/>
+          <text x="40.2" y="3.0" text-anchor="middle" font-size="0.5" font-weight="700">К</text>
+
+          <!-- Cluster of 3 trees left of house -->
+          <g class="zone" data-id="perimeter" data-name="Деревья / кустарник" data-size="" data-cat="Сад">
+            <circle cx="25.5" cy="16.2" r="0.9" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="26.8" cy="15.5" r="0.95" fill="#6f9c6f" stroke="#2a261f" stroke-width="0.07"/>
+            <circle cx="26.2" cy="17.3" r="0.85" fill="#7eae7e" stroke="#2a261f" stroke-width="0.07"/>
+          </g>
+
+          <!-- House on the right, porch toward bottom (entrance side) -->
+          <g class="zone" data-id="house" data-name="Дом" data-size="" data-cat="Постройки">
+            <rect x="28.5" y="12.0" width="13" height="11" fill="#c9a06a" opacity="0.82" stroke="#2a261f" stroke-width="0.12"/>
+            <line x1="28.5" y1="15.2" x2="41.5" y2="15.2" stroke="#2a261f" stroke-width="0.05" opacity="0.35"/>
+            <line x1="35" y1="12.0" x2="35" y2="23.0" stroke="#2a261f" stroke-width="0.05" opacity="0.35"/>
+            <!-- porch at bottom -->
+            <rect x="33.5" y="23.0" width="3.2" height="1.6" fill="#b89058" stroke="#2a261f" stroke-width="0.09"/>
+            <text x="35" y="17.8" text-anchor="middle" font-size="0.85" font-weight="700" fill="#1a1814">Дом</text>
+          </g>
+
+          <!-- Parking / beds: two rounded loops left of house / by driveway -->
+          <g class="zone" data-id="parking" data-name="Парковка / клумбы" data-size="" data-cat="Инфраструктура">
+            <rect x="23.5" y="17.5" width="3.8" height="2.4" rx="1.1" fill="#c9b27a" opacity="0.55" stroke="#2a261f" stroke-width="0.08"/>
+            <rect x="23.5" y="20.4" width="3.8" height="2.4" rx="1.1" fill="#c9b27a" opacity="0.55" stroke="#2a261f" stroke-width="0.08"/>
+            <text x="25.4" y="23.6" text-anchor="middle" font-size="0.38" fill="#1a1814">парковка</text>
+          </g>
+
+          <!-- Paths: double-line organic network matching sketch topology -->
+          <g class="zone" data-id="paths" data-name="Дорожки" data-size="" data-cat="Инфраструктура">
+            <!-- outer stroke -->
+            <path d="M 35 24.8
+                     C 33 25.5, 28 25.2, 24 23.5
+                     C 20 21.5, 18.5 18.5, 17 16
+                     C 15.5 13.5, 14 12.2, 13.2 11.5"
+                  fill="none" stroke="#a89870" stroke-width="0.85" stroke-linecap="round" opacity="0.85"/>
+            <!-- branch to fire / bath -->
+            <path d="M 18 18
+                     C 16.5 19.5, 15 20.5, 14 21.5
+                     M 17.5 17.5
+                     C 14 17, 11 17.2, 8 17.5
+                     C 6.5 17.6, 5.5 17.8, 5.2 18.2"
+                  fill="none" stroke="#a89870" stroke-width="0.65" stroke-linecap="round" opacity="0.85"/>
+            <!-- branch around slide toward tennis / spruce -->
+            <path d="M 18.5 16.5
+                     C 20 15, 21.5 13.5, 22.5 12
+                     C 23.5 10.5, 24 9, 25 7.5
+                     C 25.8 6.2, 26.5 4.5, 26.5 3.5"
+                  fill="none" stroke="#a89870" stroke-width="0.65" stroke-linecap="round" opacity="0.85"/>
+            <!-- to shed / mangal -->
+            <path d="M 27 5.5
+                     C 29 4.5, 31 3.8, 33.5 3.5"
+                  fill="none" stroke="#a89870" stroke-width="0.55" stroke-linecap="round" opacity="0.85"/>
+            <!-- loop around parking -->
+            <path d="M 28.2 18.5
+                     C 27 17.2, 25.5 16.5, 24 16.8
+                     C 22.5 17.2, 22.2 19, 22.5 20.5
+                     C 22.8 22, 24 23, 25.5 23.2
+                     C 27 23.4, 28.5 22, 28.8 20.5"
+                  fill="none" stroke="#a89870" stroke-width="0.55" stroke-linecap="round" opacity="0.8"/>
+            <!-- entrance from bottom -->
+            <path d="M 35 28 L 35 24.8" fill="none" stroke="#a89870" stroke-width="1.3" stroke-linecap="round" opacity="0.9"/>
+            <!-- inner lighter line for double-path look -->
+            <path d="M 35 24.8
+                     C 33 25.5, 28 25.2, 24 23.5
+                     C 20 21.5, 18.5 18.5, 17 16
+                     C 15.5 13.5, 14 12.2, 13.2 11.5"
+                  fill="none" stroke="#e7efe4" stroke-width="0.28" stroke-linecap="round" opacity="0.7"/>
+          </g>
+
+          <!-- Utility markers at bottom near entrance -->
+          <circle cx="38.5" cy="26.8" r="0.5" fill="#fffcf6" stroke="#2a261f" stroke-width="0.08"/>
+          <text x="38.5" y="27.0" text-anchor="middle" font-size="0.45" font-weight="700">К</text>
+          <circle cx="40.0" cy="26.8" r="0.5" fill="#fffcf6" stroke="#2a261f" stroke-width="0.08"/>
+          <text x="40.0" y="27.0" text-anchor="middle" font-size="0.45" font-weight="700">С</text>
+
+          <text x="22" y="29.2" text-anchor="middle" font-size="0.48" fill="#5a554c">въезд / вход</text>
+          <text x="7.5" y="-0.6" text-anchor="middle" font-size="0.4" fill="#5a554c">спорт · дальняя сторона</text>
         </svg>
       </div>
       <div class="detail" id="detail">Выберите элемент на плане или в таблице.</div>
       <div class="legend">
-        <span><i class="swatch" style="background:#d4a574"></i>Постройки</span>
-        <span><i class="swatch" style="background:#6b9ac4"></i>Спорт</span>
-        <span><i class="swatch" style="background:#8fbc8f"></i>Сад</span>
-        <span><i class="swatch" style="background:#c47a6a"></i>Отдых</span>
-        <span><i class="swatch" style="background:#b8a990"></i>Инфраструктура</span>
+        <span><i class="swatch" style="background:#c9a06a"></i>Постройки</span>
+        <span><i class="swatch" style="background:#6a98c0"></i>Спорт</span>
+        <span><i class="swatch" style="background:#7eae7e"></i>Сад</span>
+        <span><i class="swatch" style="background:#c07a6c"></i>Отдых</span>
+        <span><i class="swatch" style="background:#b5a57e"></i>Инфраструктура</span>
       </div>
     </section>
 
@@ -329,14 +369,14 @@
       <section class="panel" style="margin-bottom:1rem">
         <h2>Элементы с размерами</h2>
         <table id="sized">
-          <thead><tr><th>Элемент</th><th>Размер</th><th>Категория</th></tr></thead>
+          <thead><tr><th>Элемент</th><th>Размер</th><th>Ориентация</th></tr></thead>
           <tbody>
-            <tr data-id="football"><td>Футбольное поле</td><td>9×14 м</td><td>Спорт</td></tr>
-            <tr data-id="tennis"><td>Теннис + воркаут + баскетбол</td><td>9×8 м</td><td>Спорт</td></tr>
-            <tr data-id="bath"><td>Баня</td><td>3×4 м</td><td>Постройки</td></tr>
-            <tr data-id="campfire"><td>Костёр</td><td>5×5 м</td><td>Отдых</td></tr>
-            <tr data-id="bbq"><td>Мангал</td><td>3×4 м</td><td>Отдых</td></tr>
-            <tr data-id="shed"><td>Бытовка</td><td>2,5×6 м</td><td>Постройки</td></tr>
+            <tr data-id="football"><td>Футбол</td><td>9×14 м</td><td>вертикально (14 по высоте)</td></tr>
+            <tr data-id="tennis"><td>Теннис + воркаут + баскетбол</td><td>9×8 м</td><td>справа от футбола, через габион</td></tr>
+            <tr data-id="bath"><td>Баня</td><td>3×4 м</td><td>под футболом</td></tr>
+            <tr data-id="campfire"><td>Костёр</td><td>5×5 м</td><td>у теплицы</td></tr>
+            <tr data-id="bbq"><td>Мангал</td><td>3×4 м</td><td>сверху, у бытовки</td></tr>
+            <tr data-id="shed"><td>Бытовка</td><td>2,5×6 м</td><td>горизонтально</td></tr>
           </tbody>
         </table>
       </section>
@@ -344,55 +384,47 @@
       <section class="panel" style="margin-bottom:1rem">
         <h2>Прочие зоны</h2>
         <table id="other">
-          <thead><tr><th>Элемент</th><th>Категория</th><th>Примечание</th></tr></thead>
+          <thead><tr><th>Элемент</th><th>Где на плане</th></tr></thead>
           <tbody>
-            <tr data-id="house"><td>Дом</td><td>Постройки</td><td>С крыльцом</td></tr>
-            <tr data-id="greenhouse"><td>Теплица</td><td>Сад</td><td>Грядки внутри</td></tr>
-            <tr data-id="slide"><td>Горка зимняя</td><td>Отдых</td><td>Рельеф / насыпь</td></tr>
-            <tr data-id="tree"><td>Ель новогодняя</td><td>Сад</td><td>Акцентное дерево</td></tr>
-            <tr data-id="swings"><td>Качели</td><td>Отдых</td><td>—</td></tr>
-            <tr data-id="lawn"><td>Газон</td><td>Сад</td><td>У спортплощадок</td></tr>
-            <tr data-id="parking"><td>Парковка / клумбы</td><td>Инфраструктура</td><td>2 овала у дома</td></tr>
-            <tr data-id="paths"><td>Дорожки</td><td>Инфраструктура</td><td>Связывают зоны</td></tr>
-            <tr data-id="gabion"><td>Габион</td><td>Инфраструктура</td><td>Правая граница</td></tr>
-            <tr data-id="ditch"><td>Канава</td><td>Инфраструктура</td><td>Левая граница</td></tr>
-            <tr data-id="perimeter"><td>Деревья / кустарник</td><td>Сад</td><td>Периметр</td></tr>
+            <tr data-id="house"><td>Дом</td><td>справа, крыльцо к въезду</td></tr>
+            <tr data-id="greenhouse"><td>Теплица</td><td>слева внизу, под баней</td></tr>
+            <tr data-id="slide"><td>Горка зимняя</td><td>центр, под теннисом</td></tr>
+            <tr data-id="tree"><td>Ель новогодняя</td><td>между теннисом и домом</td></tr>
+            <tr data-id="swings"><td>Качели</td><td>у костра</td></tr>
+            <tr data-id="lawn"><td>Газон</td><td>у спортплощадок</td></tr>
+            <tr data-id="parking"><td>Парковка / клумбы</td><td>2 овала у дома</td></tr>
+            <tr data-id="paths"><td>Дорожки</td><td>извилистая сеть</td></tr>
+            <tr data-id="gabion"><td>Габион</td><td>между футболом и теннисом</td></tr>
+            <tr data-id="perimeter"><td>Деревья</td><td>слева сплошной ряд + снизу</td></tr>
           </tbody>
         </table>
       </section>
 
       <section class="panel">
-        <h2>Маркеры коммуникаций</h2>
-        <table>
-          <thead><tr><th>Метка</th><th>Расшифровка</th></tr></thead>
-          <tbody>
-            <tr><td><strong>К</strong></td><td>Канализация / коммуникации</td></tr>
-            <tr><td><strong>С</strong></td><td>Скважина / септик (по исходной схеме)</td></tr>
-          </tbody>
-        </table>
-        <p class="note">Метки «К» и «С» у въезда и «К» у правого нижнего угла — как на исходном эскизе. Ориентация: въезд снизу.</p>
+        <h2>Масштаб и ориентация</h2>
+        <p class="note" style="margin:0">
+          Участок ~44×28&nbsp;м (оценка по пропорциям эскиза). Размеры построек — точные с чертежа.
+          Ориентация как на фото эскиза: <strong>слева</strong> — спорт и сад, <strong>справа</strong> — дом,
+          <strong>сверху</strong> — мангал и бытовка, <strong>снизу</strong> — въезд.
+        </p>
       </section>
     </aside>
   </div>
 
   <footer>
-    Исходник: <code>site-plan/original-sketch.jpg</code>.
-    Габарит участка ориентировочный (~25×42&nbsp;м) — на эскизе не подписан.
+    Исходник: <code>site-plan/original-sketch.jpg</code>. Исправлено: ориентация построек, дорожки, деревья, масштаб, габион между площадками.
   </footer>
 
   <script>
     const detail = document.getElementById("detail");
-    let selected = null;
-
     function setActive(id) {
-      selected = id;
       document.querySelectorAll(".zone").forEach((el) => {
         el.classList.toggle("active", el.dataset.id === id);
       });
       document.querySelectorAll("tbody tr").forEach((tr) => {
         tr.classList.toggle("hl", tr.dataset.id === id);
       });
-      const src = document.querySelector(`.zone[data-id="${id}"]`);
+      const src = [...document.querySelectorAll(`.zone[data-id="${id}"]`)][0];
       if (!src) {
         detail.textContent = "Выберите элемент на плане или в таблице.";
         return;
@@ -400,14 +432,9 @@
       const size = src.dataset.size ? ` · ${src.dataset.size}` : "";
       detail.innerHTML = `<strong>${src.dataset.name}</strong>${size} · ${src.dataset.cat}`;
     }
-
     document.querySelectorAll(".zone").forEach((el) => {
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        setActive(el.dataset.id);
-      });
+      el.addEventListener("click", (e) => { e.stopPropagation(); setActive(el.dataset.id); });
     });
-
     document.querySelectorAll("tbody tr[data-id]").forEach((tr) => {
       tr.style.cursor = "pointer";
       tr.addEventListener("click", () => setActive(tr.dataset.id));
