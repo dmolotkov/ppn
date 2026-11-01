@@ -1,20 +1,33 @@
-# ppn
+# Семейный футбол — план на 2 недели
 
-## Семейный футбол — план на 2 недели
+Домашние тренировки для троих детей (**6 / 9 / 11 лет**):  
+3 раза в неделю × 25–30 минут. Все упражнения идут одной лентой, у каждого — визуальная схема.
 
-PDF-план домашних тренировок для троих детей (6 / 9 / 11 лет):  
-**3 тренировки в неделю × 25–30 минут**, все упражнения идут одной лентой, у каждого упражнения есть визуальная схема.
+## PDF-файлы
 
-### Файл
+### Полный сборник
+| Файл | Содержание |
+|------|------------|
+| [`family_football_2weeks.pdf`](./family_football_2weeks.pdf) | Обложка + все 6 тренировок + цели и расписание |
 
-- [`family_football_2weeks.pdf`](./family_football_2weeks.pdf) — готовый план со схемками
-- [`generate_training_pdf.py`](./generate_training_pdf.py) — генератор PDF
+### Отдельные тренировки (схемы крупнее — удобно на поле)
+| Файл | Когда |
+|------|-------|
+| [`trainings/trenirovka_01_pervyj_shag.pdf`](./trainings/trenirovka_01_pervyj_shag.pdf) | Неделя 1 • Тренировка 1 — Первый шаг |
+| [`trainings/trenirovka_02_dogoni_i_otdaj.pdf`](./trainings/trenirovka_02_dogoni_i_otdaj.pdf) | Неделя 1 • Тренировка 2 — Догони и отдай |
+| [`trainings/trenirovka_03_uskorenie_posle_pasa.pdf`](./trainings/trenirovka_03_uskorenie_posle_pasa.pdf) | Неделя 1 • Тренировка 3 — Ускорение после паса |
+| [`trainings/trenirovka_04_korotkie_vklyucheniya.pdf`](./trainings/trenirovka_04_korotkie_vklyucheniya.pdf) | Неделя 2 • Тренировка 4 — Короткие включения |
+| [`trainings/trenirovka_05_zabrat_stoya.pdf`](./trainings/trenirovka_05_zabrat_stoya.pdf) | Неделя 2 • Тренировка 5 — Забрать стоя |
+| [`trainings/trenirovka_06_kak_v_igre.pdf`](./trainings/trenirovka_06_kak_v_igre.pdf) | Неделя 2 • Тренировка 6 — Как в игре |
+| [`trainings/celi_i_raspisanie.pdf`](./trainings/celi_i_raspisanie.pdf) | Цели на матчи + расписание |
 
-### Пересобрать PDF
+Копии всех PDF также лежат в [`output/`](./output/).
+
+## Пересобрать
 
 ```bash
-pip install reportlab
+pip install -r requirements.txt
 python3 generate_training_pdf.py
 ```
 
-Нужен шрифт DejaVu Sans (обычно есть в Linux: `/usr/share/fonts/truetype/dejavu/`).
+Нужен шрифт DejaVu Sans (`/usr/share/fonts/truetype/dejavu/`).

@@ -559,7 +559,18 @@ DIAGRAM_MAP = {
 class ExerciseCard(Flowable):
     """Card with number, title, time, description, age notes, and diagram."""
 
-    def __init__(self, number, title, minutes, steps, age_notes, diagram_key, diagram_kw=None, width=None):
+    def __init__(
+        self,
+        number,
+        title,
+        minutes,
+        steps,
+        age_notes,
+        diagram_key,
+        diagram_kw=None,
+        width=None,
+        large=False,
+    ):
         Flowable.__init__(self)
         self.number = number
         self.title = title
@@ -569,68 +580,90 @@ class ExerciseCard(Flowable):
         self.diagram_key = diagram_key
         self.diagram_kw = diagram_kw or {}
         self.card_width = width or (PAGE_W - 2 * MARGIN)
-        self.diag_w = 72 * mm
-        self.diag_h = 42 * mm
+        self.large = large
+        if large:
+            # diagram on top, full width — easier to read on phone/print
+            self.diag_w = PAGE_W - 2 * MARGIN - 8 * mm
+            self.diag_h = 58 * mm
+            self.title_size = 12
+            self.body_size = 9.5
+            self.note_size = 8.5
+        else:
+            self.diag_w = 72 * mm
+            self.diag_h = 42 * mm
+            self.title_size = 10
+            self.body_size = 8
+            self.note_size = 7.5
         self._height = None
 
     def wrap(self, availWidth, availHeight):
         self.card_width = min(self.card_width, availWidth)
-        # estimate height from text only — keep cards compact
-        lines = 1  # title row
-        for step in self.steps:
-            lines += max(1, 1 + len(step) // 48)
-        for note in self.age_notes:
-            lines += max(1, 1 + len(note) // 48)
-        text_h = lines * 10.2 + 14
-        # Fit to content; diagram sets a sensible minimum
-        self._height = max(self.diag_h + 7 * mm, text_h + 5 * mm)
+        if self.large:
+            self.diag_w = self.card_width - 8 * mm
+            chars = 72
+            lines = 2
+            for step in self.steps:
+                lines += max(1, 1 + len(step) // chars)
+            for note in self.age_notes:
+                lines += max(1, 1 + len(note) // chars)
+            text_h = lines * 12 + 10
+            self._height = self.diag_h + text_h + 18 * mm
+        else:
+            lines = 1
+            for step in self.steps:
+                lines += max(1, 1 + len(step) // 48)
+            for note in self.age_notes:
+                lines += max(1, 1 + len(note) // 48)
+            text_h = lines * 10.2 + 14
+            self._height = max(self.diag_h + 7 * mm, text_h + 5 * mm)
         return self.card_width, self._height
 
     def draw(self):
         c = self.canv
         w, h = self.card_width, self._height
-        # card bg
         c.setFillColor(CARD_BG)
         c.setStrokeColor(HexColor("#D5E5D8"))
         c.setLineWidth(1)
         c.roundRect(0, 0, w, h, 7, fill=1, stroke=1)
-        # left accent
         c.setFillColor(GREEN_MID)
         c.roundRect(0, 0, 3.5 * mm, h, 2, fill=1, stroke=0)
         c.rect(2 * mm, 0, 2 * mm, h, fill=1, stroke=0)
 
-        # number badge
+        badge_r = 6.5 if self.large else 5.5
         c.setFillColor(AMBER)
-        c.circle(9 * mm, h - 8 * mm, 5.5, fill=1, stroke=0)
+        c.circle(9 * mm, h - 8 * mm, badge_r, fill=1, stroke=0)
         c.setFillColor(white)
-        c.setFont("DejaVuBold", 9)
-        c.drawCentredString(9 * mm, h - 9.5 * mm, str(self.number))
+        c.setFont("DejaVuBold", 10 if self.large else 9)
+        c.drawCentredString(9 * mm, h - 9.8 * mm, str(self.number))
 
-        # title + time
         c.setFillColor(GREEN_DARK)
-        c.setFont("DejaVuBold", 10)
-        c.drawString(15 * mm, h - 9 * mm, self.title)
+        c.setFont("DejaVuBold", self.title_size)
+        c.drawString(16 * mm, h - 9.2 * mm, self.title)
         c.setFillColor(AMBER)
-        c.setFont("DejaVuBold", 8)
-        time_str = f"{self.minutes} мин"
-        c.drawRightString(w - 4 * mm, h - 9 * mm, time_str)
+        c.setFont("DejaVuBold", 9 if self.large else 8)
+        c.drawRightString(w - 4 * mm, h - 9.2 * mm, f"{self.minutes} мин")
 
-        # diagram on the right
         diag_cls = DIAGRAM_MAP[self.diagram_key]
         diag = diag_cls(width=self.diag_w, height=self.diag_h, **self.diagram_kw)
         diag.canv = c
         c.saveState()
-        c.translate(w - self.diag_w - 4 * mm, 4 * mm)
+        if self.large:
+            c.translate(4 * mm, h - 12 * mm - self.diag_h)
+        else:
+            c.translate(w - self.diag_w - 4 * mm, 4 * mm)
         diag.draw()
         c.restoreState()
 
-        # text block
-        text_x = 5 * mm
-        text_top = h - 15 * mm
-        y = text_top
-        c.setFillColor(INK)
-        c.setFont("DejaVu", 8)
-        max_text_w = w - self.diag_w - 12 * mm
+        if self.large:
+            text_x = 5 * mm
+            y = h - 14 * mm - self.diag_h - 4 * mm
+            max_text_w = w - 10 * mm
+            body_leading = 12
+        else:
+            text_x = 5 * mm
+            y = h - 15 * mm
+            max_text_w = w - self.diag_w - 12 * mm
+            body_leading = 10.2
 
         def draw_wrapped(text, font="DejaVu", size=8, color=INK, leading=10.5):
             nonlocal y
@@ -651,17 +684,16 @@ class ExerciseCard(Flowable):
                 y -= leading
 
         for step in self.steps:
-            draw_wrapped("• " + step, "DejaVu", 8, INK, 10.2)
+            draw_wrapped("• " + step, "DejaVu", self.body_size, INK, body_leading)
             y -= 1
 
         y -= 2
         if self.age_notes:
             c.setFillColor(AMBER_LIGHT)
-            box_h = min(y - 3 * mm, len(self.age_notes) * 10 + 6)
-            if box_h > 8:
-                c.roundRect(text_x - 1 * mm, y - box_h + 8, max_text_w + 2 * mm, box_h, 3, fill=1, stroke=0)
+            box_h = len(self.age_notes) * (body_leading + 1) + 8
+            c.roundRect(text_x - 1 * mm, y - box_h + body_leading, max_text_w + 2 * mm, box_h, 3, fill=1, stroke=0)
             for note in self.age_notes:
-                draw_wrapped(note, "DejaVu", 7.5, HexColor("#6A3B0E"), 9.5)
+                draw_wrapped(note, "DejaVu", self.note_size, HexColor("#6A3B0E"), body_leading)
 
 
 def make_styles_header_footer(canvas, doc):
@@ -783,12 +815,384 @@ def cover_page(story, S):
     story.append(PageBreak())
 
 
-def training_block(story, S, week, num, title, phrase, exercises):
+def get_trainings():
+    """All 6 training sessions (shared by combined + per-session PDFs)."""
+    return [
+        {
+            "week": 1,
+            "num": 1,
+            "slug": "01_pervyj_shag",
+            "title": "«Первый шаг» — ~26 мин",
+            "phrase": "Побеждает тот, кто первым делает шаги к мячу",
+            "exercises": [
+                {
+                    "title": "Догонялки",
+                    "min": 3,
+                    "diagram": "tag",
+                    "steps": [
+                        "Один водящий без мяча.",
+                        "Кого коснулись рукой — тот становится водящим.",
+                        "Бегать можно в любую сторону на площадке.",
+                    ],
+                    "ages": ["6 лет: зона «дом» у родителя на 3 секунды отдыха."],
+                },
+                {
+                    "title": "Рывки к ориентиру",
+                    "min": 6,
+                    "diagram": "sprint",
+                    "diagram_kw": {"meters": "10 м"},
+                    "steps": [
+                        "Два ориентира на 10 метров.",
+                        "По команде — рывок к дальнему, коснуться рукой.",
+                        "Назад — спокойным шагом. Сделать 8 раз.",
+                    ],
+                    "ages": ["6 лет: дистанция 8 м.", "9 и 11 лет: 10–12 м."],
+                },
+                {
+                    "title": "Толкни мяч — догони — останови",
+                    "min": 6,
+                    "diagram": "push_chase",
+                    "steps": [
+                        "Лёгкий толчок мяча вперёд на 3–5 м.",
+                        "Сразу бегом догнать и остановить ногой.",
+                        "Принести обратно шагом. По 7 раз каждому.",
+                    ],
+                    "ages": [
+                        "6 лет: толкать слабо, главное — побежал.",
+                        "9 лет: после остановки ещё 3 шага вперёд с мячом.",
+                        "11 лет: остановил → пас родителю → открылся.",
+                    ],
+                },
+                {
+                    "title": "Квадрат: нельзя стоять",
+                    "min": 7,
+                    "diagram": "square",
+                    "steps": [
+                        "Квадрат ~8×8 м (4 ориентира).",
+                        "С мячом стоять не больше 2 секунд.",
+                        "Нужно отдать пас или пойти вперёд. Подкаты запрещены.",
+                    ],
+                    "ages": ["6 лет: после приёма 2 секунды его не отбирают."],
+                },
+                {
+                    "title": "Удары по воротам",
+                    "min": 4,
+                    "diagram": "shots",
+                    "steps": [
+                        "Ворота = 2 бутылки / конуса.",
+                        "Родитель пасует — ребёнок бьёт. По 6 ударов.",
+                        "Без оценок «слабо/криво».",
+                    ],
+                    "ages": [],
+                },
+            ],
+        },
+        {
+            "week": 1,
+            "num": 2,
+            "slug": "02_dogoni_i_otdaj",
+            "title": "«Догони и отдай» — ~26 мин",
+            "phrase": "Отдал — сразу сдвинулся",
+            "exercises": [
+                {
+                    "title": "Догонялки с мячом у ноги",
+                    "min": 3,
+                    "diagram": "tag_ball",
+                    "steps": [
+                        "Водящий без мяча.",
+                        "У остальных мяч у ноги — ведут и убегают.",
+                        "Потерял контроль мяча — можно пятнать.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Челноки",
+                    "min": 6,
+                    "diagram": "shuttle",
+                    "steps": [
+                        "Ориентиры: старт — 5 м — 10 м.",
+                        "До 5 м и назад, потом до 10 м и назад шагом.",
+                        "6 повторов.",
+                    ],
+                    "ages": ["6 лет: только до 5 м и назад, 6 раз."],
+                },
+                {
+                    "title": "Прими — отдай — сдвинься",
+                    "min": 7,
+                    "diagram": "receive_move",
+                    "steps": [
+                        "Родитель пасует каждому по кругу.",
+                        "Принять → отдать обратно → 3 шага в сторону/вперёд.",
+                        "По 8 касаний каждому.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Игра 2 на 1",
+                    "min": 7,
+                    "diagram": "two_v_one",
+                    "steps": [
+                        "Двое держат мяч пасами, один отбирает.",
+                        "Каждые 1–1,5 мин меняете отбирающего.",
+                        "Цель атакующих: 5 пасов подряд.",
+                    ],
+                    "ages": ["6 лет чаще в атаке, реже один в отборе."],
+                },
+                {
+                    "title": "Свободные удары",
+                    "min": 3,
+                    "diagram": "shots",
+                    "steps": [
+                        "Кто куда хочет бьёт по воротам.",
+                        "Без очереди и оценок — закончить на удовольствии.",
+                    ],
+                    "ages": [],
+                },
+            ],
+        },
+        {
+            "week": 1,
+            "num": 3,
+            "slug": "03_uskorenie_posle_pasa",
+            "title": "«Ускорение после паса» — ~26 мин",
+            "phrase": "Отдал — ускорился",
+            "exercises": [
+                {
+                    "title": "Бег змейкой",
+                    "min": 3,
+                    "diagram": "snake",
+                    "steps": [
+                        "4 ориентира в линию.",
+                        "Лёгкий бег змейкой туда-обратно 3 раза.",
+                        "Потом 3 раза чуть быстрее.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Рывки из разных стартов",
+                    "min": 6,
+                    "diagram": "starts",
+                    "steps": [
+                        "Старты: лицом, боком, спиной, сидя — по 2 раза (всего 8).",
+                        "По свистку/команде — рывок 8–10 м к ориентиру.",
+                    ],
+                    "ages": ["6 лет: можно 8 м и без старта «сидя»."],
+                },
+                {
+                    "title": "Пас + рывок",
+                    "min": 7,
+                    "diagram": "pass_sprint",
+                    "steps": [
+                        "Отдал пас родителю/в стенку.",
+                        "Сразу ускорение 8–10 м к ориентиру.",
+                        "Назад шагом. По 6 раз каждому.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Квадрат: гол после ведения",
+                    "min": 7,
+                    "diagram": "dribble_shot",
+                    "steps": [
+                        "Перед ударом минимум 2 касания своим ведением.",
+                        "Маленькие ворота из 2 ориентиров.",
+                        "Играют все вместе.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Удары с места",
+                    "min": 3,
+                    "diagram": "shots",
+                    "steps": ["По 3 удара каждому.", "Закончить на эмоции, без критики."],
+                    "ages": [],
+                },
+            ],
+        },
+        {
+            "week": 2,
+            "num": 4,
+            "slug": "04_korotkie_vklyucheniya",
+            "title": "«Много коротких включений» — ~27 мин",
+            "phrase": "Короткий рывок лучше, чем долгое стояние",
+            "exercises": [
+                {
+                    "title": "Догонялки",
+                    "min": 3,
+                    "diagram": "tag",
+                    "steps": ["Как в тренировке 1: водящий пятнает рукой."],
+                    "ages": ["6 лет: можно «дом» на 3 секунды."],
+                },
+                {
+                    "title": "Серия коротких рывков",
+                    "min": 7,
+                    "diagram": "short_sprints",
+                    "steps": [
+                        "10 рывков по 8–10 м.",
+                        "Между ними только шаг назад.",
+                        "Если к 8-му уже «нет ног» — остановиться раньше.",
+                    ],
+                    "ages": ["6 лет: 8 × 8 м."],
+                },
+                {
+                    "title": "Ведение до ориентира и назад",
+                    "min": 6,
+                    "diagram": "dribble_ob",
+                    "steps": [
+                        "10 м с мячом туда (без остановки, не обязательно быстро).",
+                        "Назад шагом. По 5 раз.",
+                    ],
+                    "ages": [
+                        "9 лет: на последних 3 м чуть ускориться.",
+                        "11 лет: на обратном пути — пас родителю с 5–6 м.",
+                    ],
+                },
+                {
+                    "title": "Удержание мяча (3 на родителя)",
+                    "min": 7,
+                    "diagram": "keepaway",
+                    "steps": [
+                        "Трое детей передают между собой.",
+                        "Родитель слегка мешает (не в полную силу).",
+                        "Цель: 8 пасов подряд.",
+                    ],
+                    "ages": ["Младшему всегда можно отдать «лёгкий» пас."],
+                },
+                {
+                    "title": "Удары после паса",
+                    "min": 4,
+                    "diagram": "shots",
+                    "steps": ["Пас вдоль от родителя → удар.", "По 5 раз каждому."],
+                    "ages": [],
+                },
+            ],
+        },
+        {
+            "week": 2,
+            "num": 5,
+            "slug": "05_zabrat_stoya",
+            "title": "«Забрать стоя» — ~26 мин",
+            "phrase": "Сначала ноги и 2 шага, потом борьба",
+            "exercises": [
+                {
+                    "title": "Догонялки в квадрате",
+                    "min": 3,
+                    "diagram": "tag",
+                    "steps": ["Все в квадрате 8×8 м, выходить нельзя."],
+                    "ages": [],
+                },
+                {
+                    "title": "Рывок к мячу (только стоя)",
+                    "min": 6,
+                    "diagram": "roll_stop",
+                    "steps": [
+                        "Родитель откатывает мяч в сторону.",
+                        "Ребёнок доходит и останавливает СТОЯ, без падения.",
+                        "Каждому по 6 мячей. Упал или подкат — повтор.",
+                    ],
+                    "ages": ["Важно для 9 лет: убрать привычку «падать в подкате»."],
+                },
+                {
+                    "title": "1 на 1 на крошечном поле",
+                    "min": 8,
+                    "diagram": "one_v_one",
+                    "steps": [
+                        "Поле ~6×10 м, маленькие ворота с двух сторон.",
+                        "Пары по 60–90 сек, третий отдыхает/подаёт.",
+                        "Потом смена.",
+                    ],
+                    "ages": ["Родитель может играть, если нужен партнёр."],
+                },
+                {
+                    "title": "Общий квадрат без стояния",
+                    "min": 6,
+                    "diagram": "square",
+                    "steps": [
+                        "Снова правило 2 секунд с мячом.",
+                        "Отбор только стоя, без подкатов.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Удары на точность",
+                    "min": 3,
+                    "diagram": "shots",
+                    "steps": ["Попасть между двумя бутылками с 6–8 м.", "По 4 попытки."],
+                    "ages": [],
+                },
+            ],
+        },
+        {
+            "week": 2,
+            "num": 6,
+            "slug": "06_kak_v_igre",
+            "title": "«Как в игре» — ~27 мин",
+            "phrase": "Играем в движение, не в стояние",
+            "exercises": [
+                {
+                    "title": "Лёгкие догонялки",
+                    "min": 2,
+                    "diagram": "tag",
+                    "steps": ["Короткий разогрев 2 минуты."],
+                    "ages": [],
+                },
+                {
+                    "title": "Рывки 6 × 12 м",
+                    "min": 5,
+                    "diagram": "sprint",
+                    "diagram_kw": {"meters": "12 м"},
+                    "steps": [
+                        "6 рывков по 12 м.",
+                        "После каждого — 20 сек спокойной ходьбы.",
+                    ],
+                    "ages": ["6 лет: 6 × 8–10 м."],
+                },
+                {
+                    "title": "Связка: прими — 3 шага — пас — рывок",
+                    "min": 7,
+                    "diagram": "combo",
+                    "steps": [
+                        "Принять от родителя.",
+                        "3 шага вперёд с мячом.",
+                        "Отдать пас.",
+                        "Ускориться 8 м к ориентиру. По 5 раз каждому.",
+                    ],
+                    "ages": [],
+                },
+                {
+                    "title": "Мини-матч",
+                    "min": 10,
+                    "diagram": "match",
+                    "steps": [
+                        "3 на родителя или 2 на 1 с помощью родителя.",
+                        "Нельзя стоять с мячом. Подкатов нет.",
+                        "После потери — сразу попытка вернуть.",
+                    ],
+                    "ages": ["Счёт можно вести мягко, без давления."],
+                },
+                {
+                    "title": "Удары «на десерт»",
+                    "min": 3,
+                    "diagram": "shots",
+                    "steps": ["Каждый сам выбирает способ удара.", "Закончить улыбкой."],
+                    "ages": [],
+                },
+            ],
+        },
+    ]
+
+
+def training_block(story, S, training, large=False):
+    week = training["week"]
+    num = training["num"]
+    title = training["title"]
+    phrase = training["phrase"]
+    exercises = training["exercises"]
+
     story.append(Paragraph(f"Неделя {week} • Тренировка {num}", S["H1"]))
     story.append(Paragraph(title, S["H2"]))
     story.append(Spacer(1, 2 * mm))
 
-    # phrase banner
     phrase_t = Table(
         [[Paragraph(f"Фраза дня: «{phrase}»", S["Phrase"])]],
         colWidths=[PAGE_W - 2 * MARGIN],
@@ -805,7 +1209,7 @@ def training_block(story, S, week, num, title, phrase, exercises):
         )
     )
     story.append(phrase_t)
-    story.append(Spacer(1, 4 * mm))
+    story.append(Spacer(1, 3 * mm if large else 4 * mm))
 
     for i, ex in enumerate(exercises, 1):
         card = ExerciseCard(
@@ -816,10 +1220,11 @@ def training_block(story, S, week, num, title, phrase, exercises):
             age_notes=ex.get("ages", []),
             diagram_key=ex["diagram"],
             diagram_kw=ex.get("diagram_kw", {}),
+            large=large,
         )
-        story.append(KeepTogether([card, Spacer(1, 2.2 * mm)]))
+        gap = 3.5 * mm if large else 2.2 * mm
+        story.append(KeepTogether([card, Spacer(1, gap)]))
 
-    # praise line
     story.append(Spacer(1, 1 * mm))
     story.append(Paragraph("После тренировки — похвала", S["H2"]))
     story.append(
@@ -832,422 +1237,13 @@ def training_block(story, S, week, num, title, phrase, exercises):
     )
 
 
-def build():
-    out = Path("/workspace/family_football_2weeks.pdf")
-    S = styles()
-    doc = SimpleDocTemplate(
-        str(out),
-        pagesize=A4,
-        leftMargin=MARGIN,
-        rightMargin=MARGIN,
-        topMargin=14 * mm,
-        bottomMargin=14 * mm,
-        title="Семейный футбол — план на 2 недели",
-        author="Family Football Plan",
-    )
-    story = []
-    cover_page(story, S)
-
-    # ===== WEEK 1 =====
-    training_block(
-        story,
-        S,
-        week=1,
-        num=1,
-        title="«Первый шаг» — ~26 мин",
-        phrase="Побеждает тот, кто первым делает шаги к мячу",
-        exercises=[
-            {
-                "title": "Догонялки",
-                "min": 3,
-                "diagram": "tag",
-                "steps": [
-                    "Один водящий без мяча.",
-                    "Кого коснулись рукой — тот становится водящим.",
-                    "Бегать можно в любую сторону на площадке.",
-                ],
-                "ages": ["6 лет: зона «дом» у родителя на 3 секунды отдыха."],
-            },
-            {
-                "title": "Рывки к ориентиру",
-                "min": 6,
-                "diagram": "sprint",
-                "diagram_kw": {"meters": "10 м"},
-                "steps": [
-                    "Два ориентира на 10 метров.",
-                    "По команде — рывок к дальнему, коснуться рукой.",
-                    "Назад — спокойным шагом. Сделать 8 раз.",
-                ],
-                "ages": ["6 лет: дистанция 8 м.", "9 и 11 лет: 10–12 м."],
-            },
-            {
-                "title": "Толкни мяч — догони — останови",
-                "min": 6,
-                "diagram": "push_chase",
-                "steps": [
-                    "Лёгкий толчок мяча вперёд на 3–5 м.",
-                    "Сразу бегом догнать и остановить ногой.",
-                    "Принести обратно шагом. По 7 раз каждому.",
-                ],
-                "ages": [
-                    "6 лет: толкать слабо, главное — побежал.",
-                    "9 лет: после остановки ещё 3 шага вперёд с мячом.",
-                    "11 лет: остановил → пас родителю → открылся.",
-                ],
-            },
-            {
-                "title": "Квадрат: нельзя стоять",
-                "min": 7,
-                "diagram": "square",
-                "steps": [
-                    "Квадрат ~8×8 м (4 ориентира).",
-                    "С мячом стоять не больше 2 секунд.",
-                    "Нужно отдать пас или пойти вперёд. Подкаты запрещены.",
-                ],
-                "ages": ["6 лет: после приёма 2 секунды его не отбирают."],
-            },
-            {
-                "title": "Удары по воротам",
-                "min": 4,
-                "diagram": "shots",
-                "steps": [
-                    "Ворота = 2 бутылки / конуса.",
-                    "Родитель пасует — ребёнок бьёт. По 6 ударов.",
-                    "Без оценок «слабо/криво».",
-                ],
-                "ages": [],
-            },
-        ],
-    )
-    story.append(PageBreak())
-
-    training_block(
-        story,
-        S,
-        week=1,
-        num=2,
-        title="«Догони и отдай» — ~26 мин",
-        phrase="Отдал — сразу сдвинулся",
-        exercises=[
-            {
-                "title": "Догонялки с мячом у ноги",
-                "min": 3,
-                "diagram": "tag_ball",
-                "steps": [
-                    "Водящий без мяча.",
-                    "У остальных мяч у ноги — ведут и убегают.",
-                    "Потерял контроль мяча — можно пятнать.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Челноки",
-                "min": 6,
-                "diagram": "shuttle",
-                "steps": [
-                    "Ориентиры: старт — 5 м — 10 м.",
-                    "До 5 м и назад, потом до 10 м и назад шагом.",
-                    "6 повторов.",
-                ],
-                "ages": ["6 лет: только до 5 м и назад, 6 раз."],
-            },
-            {
-                "title": "Прими — отдай — сдвинься",
-                "min": 7,
-                "diagram": "receive_move",
-                "steps": [
-                    "Родитель пасует каждому по кругу.",
-                    "Принять → отдать обратно → 3 шага в сторону/вперёд.",
-                    "По 8 касаний каждому.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Игра 2 на 1",
-                "min": 7,
-                "diagram": "two_v_one",
-                "steps": [
-                    "Двое держат мяч пасами, один отбирает.",
-                    "Каждые 1–1,5 мин меняете отбирающего.",
-                    "Цель атакующих: 5 пасов подряд.",
-                ],
-                "ages": ["6 лет чаще в атаке, реже один в отборе."],
-            },
-            {
-                "title": "Свободные удары",
-                "min": 3,
-                "diagram": "shots",
-                "steps": [
-                    "Кто куда хочет бьёт по воротам.",
-                    "Без очереди и оценок — закончить на удовольствии.",
-                ],
-                "ages": [],
-            },
-        ],
-    )
-    story.append(PageBreak())
-
-    training_block(
-        story,
-        S,
-        week=1,
-        num=3,
-        title="«Ускорение после паса» — ~26 мин",
-        phrase="Отдал — ускорился",
-        exercises=[
-            {
-                "title": "Бег змейкой",
-                "min": 3,
-                "diagram": "snake",
-                "steps": [
-                    "4 ориентира в линию.",
-                    "Лёгкий бег змейкой туда-обратно 3 раза.",
-                    "Потом 3 раза чуть быстрее.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Рывки из разных стартов",
-                "min": 6,
-                "diagram": "starts",
-                "steps": [
-                    "Старты: лицом, боком, спиной, сидя — по 2 раза (всего 8).",
-                    "По свистку/команде — рывок 8–10 м к ориентиру.",
-                ],
-                "ages": ["6 лет: можно 8 м и без старта «сидя»."],
-            },
-            {
-                "title": "Пас + рывок",
-                "min": 7,
-                "diagram": "pass_sprint",
-                "steps": [
-                    "Отдал пас родителю/в стенку.",
-                    "Сразу ускорение 8–10 м к ориентиру.",
-                    "Назад шагом. По 6 раз каждому.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Квадрат: гол после ведения",
-                "min": 7,
-                "diagram": "dribble_shot",
-                "steps": [
-                    "Перед ударом минимум 2 касания своим ведением.",
-                    "Маленькие ворота из 2 ориентиров.",
-                    "Играют все вместе.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Удары с места",
-                "min": 3,
-                "diagram": "shots",
-                "steps": ["По 3 удара каждому.", "Закончить на эмоции, без критики."],
-                "ages": [],
-            },
-        ],
-    )
-    story.append(PageBreak())
-
-    # ===== WEEK 2 =====
-    training_block(
-        story,
-        S,
-        week=2,
-        num=4,
-        title="«Много коротких включений» — ~27 мин",
-        phrase="Короткий рывок лучше, чем долгое стояние",
-        exercises=[
-            {
-                "title": "Догонялки",
-                "min": 3,
-                "diagram": "tag",
-                "steps": ["Как в тренировке 1: водящий пятнает рукой."],
-                "ages": ["6 лет: можно «дом» на 3 секунды."],
-            },
-            {
-                "title": "Серия коротких рывков",
-                "min": 7,
-                "diagram": "short_sprints",
-                "steps": [
-                    "10 рывков по 8–10 м.",
-                    "Между ними только шаг назад.",
-                    "Если к 8-му уже «нет ног» — остановиться раньше.",
-                ],
-                "ages": ["6 лет: 8 × 8 м."],
-            },
-            {
-                "title": "Ведение до ориентира и назад",
-                "min": 6,
-                "diagram": "dribble_ob",
-                "steps": [
-                    "10 м с мячом туда (без остановки, не обязательно быстро).",
-                    "Назад шагом. По 5 раз.",
-                ],
-                "ages": [
-                    "9 лет: на последних 3 м чуть ускориться.",
-                    "11 лет: на обратном пути — пас родителю с 5–6 м.",
-                ],
-            },
-            {
-                "title": "Удержание мяча (3 на родителя)",
-                "min": 7,
-                "diagram": "keepaway",
-                "steps": [
-                    "Трое детей передают между собой.",
-                    "Родитель слегка мешает (не в полную силу).",
-                    "Цель: 8 пасов подряд.",
-                ],
-                "ages": ["Младшему всегда можно отдать «лёгкий» пас."],
-            },
-            {
-                "title": "Удары после паса",
-                "min": 4,
-                "diagram": "shots",
-                "steps": ["Пас вдоль от родителя → удар.", "По 5 раз каждому."],
-                "ages": [],
-            },
-        ],
-    )
-    story.append(PageBreak())
-
-    training_block(
-        story,
-        S,
-        week=2,
-        num=5,
-        title="«Забрать стоя» — ~26 мин",
-        phrase="Сначала ноги и 2 шага, потом борьба",
-        exercises=[
-            {
-                "title": "Догонялки в квадрате",
-                "min": 3,
-                "diagram": "tag",
-                "steps": ["Все в квадрате 8×8 м, выходить нельзя."],
-                "ages": [],
-            },
-            {
-                "title": "Рывок к мячу (только стоя)",
-                "min": 6,
-                "diagram": "roll_stop",
-                "steps": [
-                    "Родитель откатывает мяч в сторону.",
-                    "Ребёнок доходит и останавливает СТОЯ, без падения.",
-                    "Каждому по 6 мячей. Упал или подкат — повтор.",
-                ],
-                "ages": ["Важно для 9 лет: убрать привычку «падать в подкате»."],
-            },
-            {
-                "title": "1 на 1 на крошечном поле",
-                "min": 8,
-                "diagram": "one_v_one",
-                "steps": [
-                    "Поле ~6×10 м, маленькие ворота с двух сторон.",
-                    "Пары по 60–90 сек, третий отдыхает/подаёт.",
-                    "Потом смена.",
-                ],
-                "ages": ["Родитель может играть, если нужен партнёр."],
-            },
-            {
-                "title": "Общий квадрат без стояния",
-                "min": 6,
-                "diagram": "square",
-                "steps": [
-                    "Снова правило 2 секунд с мячом.",
-                    "Отбор только стоя, без подкатов.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Удары на точность",
-                "min": 3,
-                "diagram": "shots",
-                "steps": ["Попасть между двумя бутылками с 6–8 м.", "По 4 попытки."],
-                "ages": [],
-            },
-        ],
-    )
-    story.append(PageBreak())
-
-    training_block(
-        story,
-        S,
-        week=2,
-        num=6,
-        title="«Как в игре» — ~27 мин",
-        phrase="Играем в движение, не в стояние",
-        exercises=[
-            {
-                "title": "Лёгкие догонялки",
-                "min": 2,
-                "diagram": "tag",
-                "steps": ["Короткий разогрев 2 минуты."],
-                "ages": [],
-            },
-            {
-                "title": "Рывки 6 × 12 м",
-                "min": 5,
-                "diagram": "sprint",
-                "diagram_kw": {"meters": "12 м"},
-                "steps": [
-                    "6 рывков по 12 м.",
-                    "После каждого — 20 сек спокойной ходьбы.",
-                ],
-                "ages": ["6 лет: 6 × 8–10 м."],
-            },
-            {
-                "title": "Связка: прими — 3 шага — пас — рывок",
-                "min": 7,
-                "diagram": "combo",
-                "steps": [
-                    "Принять от родителя.",
-                    "3 шага вперёд с мячом.",
-                    "Отдать пас.",
-                    "Ускориться 8 м к ориентиру. По 5 раз каждому.",
-                ],
-                "ages": [],
-            },
-            {
-                "title": "Мини-матч",
-                "min": 10,
-                "diagram": "match",
-                "steps": [
-                    "3 на родителя или 2 на 1 с помощью родителя.",
-                    "Нельзя стоять с мячом. Подкатов нет.",
-                    "После потери — сразу попытка вернуть.",
-                ],
-                "ages": ["Счёт можно вести мягко, без давления."],
-            },
-            {
-                "title": "Удары «на десерт»",
-                "min": 3,
-                "diagram": "shots",
-                "steps": ["Каждый сам выбирает способ удара.", "Закончить улыбкой."],
-                "ages": [],
-            },
-        ],
-    )
-    story.append(PageBreak())
-
-    # Final page — match goals + schedule
+def append_goals_page(story, S):
     story.append(Paragraph("Мини-цели на матчи этих 2 недель", S["H1"]))
     goals = [
         ["Кто", "Цель на игру", "Как хвалить"],
-        [
-            "6 лет",
-            "Не прятаться — минимум 5 касаний",
-            "«Ты не стеснялся и трогал мяч»",
-        ],
-        [
-            "9 лет",
-            "6 раз побежал к мячу / открылся",
-            "«Ты сразу пошёл вперёд — вот это нужно»",
-        ],
-        [
-            "11 лет",
-            "После каждого паса — сдвинуться",
-            "«Хороший пас и сразу открылся»",
-        ],
+        ["6 лет", "Не прятаться — минимум 5 касаний", "«Ты не стеснялся и трогал мяч»"],
+        ["9 лет", "6 раз побежал к мячу / открылся", "«Ты сразу пошёл вперёд — вот это нужно»"],
+        ["11 лет", "После каждого паса — сдвинуться", "«Хороший пас и сразу открылся»"],
     ]
     gt = Table(goals, colWidths=[22 * mm, 75 * mm, PAGE_W - 2 * MARGIN - 97 * mm])
     gt.setStyle(
@@ -1280,8 +1276,6 @@ def build():
         ["Ср / Чт", "Тренировка 2 — Догони и отдай", "Тренировка 5 — Забрать стоя"],
         ["Пт / Сб", "Тренировка 3 — Ускорение после паса", "Тренировка 6 — Как в игре"],
     ]
-    st = Table(sched, colWidths=[22 * mm, (PAGE_W - 2 * MARGIN - 22 * mm) / 2] * 1 + [])
-    # fix widths
     st = Table(
         sched,
         colWidths=[
@@ -1310,7 +1304,6 @@ def build():
     )
     story.append(st)
     story.append(Spacer(1, 8 * mm))
-
     story.append(Paragraph("После матча", S["H2"]))
     story.append(
         Paragraph(
@@ -1323,15 +1316,86 @@ def build():
     story.append(Spacer(1, 6 * mm))
     story.append(
         Paragraph(
-            "Откройте нужную тренировку на телефоне/планшете прямо на поле — "
-            "схема справа от описания показывает, как встать и куда бежать.",
+            "На поле удобнее открыть отдельный PDF нужной тренировки "
+            "(папка <b>trainings/</b>) — схемы там крупнее.",
             S["Tip"],
         )
     )
 
+
+def _make_doc(path, title):
+    return SimpleDocTemplate(
+        str(path),
+        pagesize=A4,
+        leftMargin=MARGIN,
+        rightMargin=MARGIN,
+        topMargin=14 * mm,
+        bottomMargin=14 * mm,
+        title=title,
+        author="Family Football Plan",
+    )
+
+
+def build_combined(out_dir: Path):
+    out = out_dir / "family_football_2weeks.pdf"
+    S = styles()
+    doc = _make_doc(out, "Семейный футбол — план на 2 недели")
+    story = []
+    cover_page(story, S)
+    trainings = get_trainings()
+    for i, tr in enumerate(trainings):
+        training_block(story, S, tr, large=False)
+        story.append(PageBreak())
+    append_goals_page(story, S)
     doc.build(story, onFirstPage=make_styles_header_footer, onLaterPages=make_styles_header_footer)
     print(f"Wrote {out}")
     return out
+
+
+def build_single_training(out_dir: Path, training: dict):
+    """One PDF per session with large diagrams — easy on the field."""
+    out = out_dir / f"trenirovka_{training['slug']}.pdf"
+    S = styles()
+    title = f"Тренировка {training['num']} — {training['title']}"
+    doc = _make_doc(out, f"Семейный футбол • {title}")
+    story = []
+    training_block(story, S, training, large=True)
+    doc.build(story, onFirstPage=make_styles_header_footer, onLaterPages=make_styles_header_footer)
+    print(f"Wrote {out}")
+    return out
+
+
+def build_goals_pdf(out_dir: Path):
+    out = out_dir / "celi_i_raspisanie.pdf"
+    S = styles()
+    doc = _make_doc(out, "Семейный футбол — цели и расписание")
+    story = []
+    append_goals_page(story, S)
+    doc.build(story, onFirstPage=make_styles_header_footer, onLaterPages=make_styles_header_footer)
+    print(f"Wrote {out}")
+    return out
+
+
+def build():
+    root = Path("/workspace")
+    trainings_dir = root / "trainings"
+    trainings_dir.mkdir(exist_ok=True)
+    output_dir = root / "output"
+    output_dir.mkdir(exist_ok=True)
+
+    combined = build_combined(root)
+    singles = [build_single_training(trainings_dir, tr) for tr in get_trainings()]
+    goals = build_goals_pdf(trainings_dir)
+
+    # mirrors for download convenience
+    import shutil
+
+    shutil.copy2(combined, output_dir / combined.name)
+    for p in singles + [goals]:
+        shutil.copy2(p, output_dir / p.name)
+
+    print(f"Done: 1 combined + {len(singles)} trainings + goals")
+    return combined, singles, goals
 
 
 if __name__ == "__main__":
