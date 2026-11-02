@@ -1394,11 +1394,15 @@ def build():
     # mirrors for download convenience
     import shutil
 
+    download_name = root / "Vse_trenirovki_2_nedeli.pdf"
+    shutil.copy2(combined, download_name)
     shutil.copy2(combined, output_dir / combined.name)
+    shutil.copy2(combined, output_dir / download_name.name)
     for p in singles + [goals]:
         shutil.copy2(p, output_dir / p.name)
 
     print(f"Done: 1 combined + {len(singles)} trainings + goals")
+    print(f"Download file: {download_name}")
     return combined, singles, goals
 
 
