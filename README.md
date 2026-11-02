@@ -3,25 +3,14 @@
 Домашние тренировки для троих детей (**6 / 9 / 11 лет**):  
 3 раза в неделю × 25–30 минут. Все упражнения идут одной лентой, у каждого — визуальная схема.
 
-## PDF-файлы
+## Главный файл — откройте его
 
-### Полный сборник
-| Файл | Содержание |
-|------|------------|
-| [`family_football_2weeks.pdf`](./family_football_2weeks.pdf) | Обложка + все 6 тренировок + цели и расписание |
+**[`family_football_2weeks.pdf`](./family_football_2weeks.pdf)** — один большой PDF:
+обложка → тренировки 1–6 (крупные схемы) → цели и расписание.
 
-### Отдельные тренировки (схемы крупнее — удобно на поле)
-| Файл | Когда |
-|------|-------|
-| [`trainings/trenirovka_01_pervyj_shag.pdf`](./trainings/trenirovka_01_pervyj_shag.pdf) | Неделя 1 • Тренировка 1 — Первый шаг |
-| [`trainings/trenirovka_02_dogoni_i_otdaj.pdf`](./trainings/trenirovka_02_dogoni_i_otdaj.pdf) | Неделя 1 • Тренировка 2 — Догони и отдай |
-| [`trainings/trenirovka_03_uskorenie_posle_pasa.pdf`](./trainings/trenirovka_03_uskorenie_posle_pasa.pdf) | Неделя 1 • Тренировка 3 — Ускорение после паса |
-| [`trainings/trenirovka_04_korotkie_vklyucheniya.pdf`](./trainings/trenirovka_04_korotkie_vklyucheniya.pdf) | Неделя 2 • Тренировка 4 — Короткие включения |
-| [`trainings/trenirovka_05_zabrat_stoya.pdf`](./trainings/trenirovka_05_zabrat_stoya.pdf) | Неделя 2 • Тренировка 5 — Забрать стоя |
-| [`trainings/trenirovka_06_kak_v_igre.pdf`](./trainings/trenirovka_06_kak_v_igre.pdf) | Неделя 2 • Тренировка 6 — Как в игре |
-| [`trainings/celi_i_raspisanie.pdf`](./trainings/celi_i_raspisanie.pdf) | Цели на матчи + расписание |
+Просто откройте и листайте.
 
-Копии всех PDF также лежат в [`output/`](./output/).
+Отдельные файлы по тренировкам (на всякий случай) лежат в [`trainings/`](./trainings/), копии — в [`output/`](./output/).
 
 ## Пересобрать
 

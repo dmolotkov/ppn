@@ -1316,8 +1316,8 @@ def append_goals_page(story, S):
     story.append(Spacer(1, 6 * mm))
     story.append(
         Paragraph(
-            "На поле удобнее открыть отдельный PDF нужной тренировки "
-            "(папка <b>trainings/</b>) — схемы там крупнее.",
+            "Этот файл — полный сборник: листайте дальше по тренировкам 1→6. "
+            "На поле можно открыть сразу нужную страницу.",
             S["Tip"],
         )
     )
@@ -1337,15 +1337,19 @@ def _make_doc(path, title):
 
 
 def build_combined(out_dir: Path):
+    """One big PDF: cover + all 6 trainings with LARGE diagrams + goals."""
     out = out_dir / "family_football_2weeks.pdf"
     S = styles()
-    doc = _make_doc(out, "Семейный футбол — план на 2 недели")
+    doc = _make_doc(out, "Семейный футбол — план на 2 недели (все тренировки)")
     story = []
     cover_page(story, S)
     trainings = get_trainings()
     for i, tr in enumerate(trainings):
-        training_block(story, S, tr, large=False)
-        story.append(PageBreak())
+        training_block(story, S, tr, large=True)
+        if i < len(trainings) - 1:
+            story.append(PageBreak())
+        else:
+            story.append(PageBreak())
     append_goals_page(story, S)
     doc.build(story, onFirstPage=make_styles_header_footer, onLaterPages=make_styles_header_footer)
     print(f"Wrote {out}")
